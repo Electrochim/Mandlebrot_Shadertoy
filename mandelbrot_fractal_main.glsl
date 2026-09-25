@@ -2,11 +2,16 @@
 // f(z) = z² + c
 // so for shader (x, y) = 
 
-const int REPEATS = 250;
+const vec2 camera_offset_1 = vec2(-0.1632, -1.0328F);
+
+const vec2 camera_offset = camera_offset_1;
+
+const int REPEATS = 300;
+const float MAX_DIST = 5.0F;
 
 const vec3 colors = vec3(0.2, 0.1, 0.3);
-const float brightness = 1.5F;
-const vec2 camera_offset = vec2(-0.163555, -1.0328815F);
+const float brightness = 1.3F;
+
 
 vec2 mandelbrot (vec2 c) {
     vec2 z = vec2(0.0F, 0.0F);
@@ -19,7 +24,7 @@ vec2 mandelbrot (vec2 c) {
         
         float distance = sqrt(next_x * next_x + next_y * next_y);
         
-        if (distance > 4.0F) return sqrt(z);
+        if (distance > MAX_DIST) return sqrt(z);
     }
     
     return sqrt(z);
@@ -36,7 +41,7 @@ vec3 mandelbrot_colors (vec2 c) {
         
         float distance = sqrt(next_x * next_x + next_y * next_y);
         
-        if (distance > 4.0F) return vec3(float(repeats) / float(REPEATS));
+        if (distance > MAX_DIST) return vec3(float(repeats) / float(REPEATS));
     }
     
     return vec3(0.0F, 0.0F, 0.0F);
@@ -48,7 +53,7 @@ void mainImage (out vec4 fragColor, in vec2 fragCoord)
     vec2 uv = (fragCoord - 0.5F * iResolution.xy) / iResolution.y;
     
     // zoom pixel coords based on time
-    vec2 uv_t = (uv * 2.0F) / exp(iTime - 1.5F) + camera_offset;
+    vec2 uv_t = (uv * 2.0F) / exp(iTime * 1.5F - 1.5F) + camera_offset;
 
     vec2 fractal = mandelbrot(uv_t);
     vec3 mandelbrot_col = mandelbrot_colors(uv_t);
